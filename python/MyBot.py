@@ -63,7 +63,6 @@ class MyBot:
         for food in ants.food_list:
             self.food_locs[food] = True
 
-                    
         free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) == 0]
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
@@ -97,7 +96,8 @@ class MyBot:
                 break;
 
         if len(free_ants) > 0:
-            basic_explore.issue_exploration_orders(ants, free_ants, self.visibility)
+            destinations = issue_exploration_orders(ants, free_ants,
+                    self.visibility, destinations, search_map)
 
         
         # for ant_loc in ants.my_ants():
