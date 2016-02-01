@@ -66,8 +66,15 @@ class MyBot:
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
         for ant in food_ants:
-            path = astar_search(ant, self.hill_location, search_map)
-            ants.issue_order(ant, execute(ant, hill_location, path, ants))
+            dest_hill = []
+            min_dist = -1
+            for hill in ants.my_hills():
+                path = astar_search(ant, hill, search_map)
+                if len(path) < min_dist or min_dist == -1:
+                    min_dist = len(path)
+                    dest_hill = hill
+            if min_dist >= 0:
+                ants.issue_order((ant, execute(ant, hill, path, ants)))
         
         for food in self.food_locs.keys():
             if len(free_ants) > 0:
