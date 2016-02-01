@@ -2,6 +2,8 @@
 from ants import *
 from ant import *
 from intel import *
+from pick import *
+from sys import *
 
 # define a class with a do_turn method
 # the Ants.run method will parse and update bot input
@@ -13,6 +15,7 @@ class MyBot:
         self.hill_locs = {}
         self.hill_location = None
         self.terrain = []
+        self.visibility = None
         
     # do_setup is run once at the start of the game
     # after the bot has received the game settings
@@ -20,6 +23,8 @@ class MyBot:
     def do_setup(self, ants):
         # initialize data structures after learning the game settings
         self.terrain = terrain_info(ants)
+        visibility = [[sys.maxint for row in range(ants.rows)] for col in range(ants.cols)]
+        
     
     # do turn is run once per turn
     # the ants class has the game state and is updated by the Ants.run method
@@ -27,8 +32,16 @@ class MyBot:
     def do_turn(self, ants):
         # loop through all my ants and try to give them orders
         # the ant_loc is an ant location tuple in (row, col) form
+        ants.visible((0,0))
 
-        free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) ==0]
+        for row in range(ants.rows):
+            for col in range(ants.cols):
+                if vision[row][col]:
+                    visibility[row][col] = 0
+                else:
+                    visibility[row][col] += 1
+        
+        free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) == 0]
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
         for ant in food_ants:
@@ -37,7 +50,7 @@ class MyBot:
         
         for food in food_locs:
             if len(free_ants) > 0:
-                ant = pick_ant(food, free_ants)
+                ant = pick(food, free_ants)
                 path = compute_path(ant, food)
                 ants.issue_order(ant, execute(ant, food, path, ants))
                 free_ants.remove(ant)
@@ -46,6 +59,7 @@ class MyBot:
 
         if len(free_ants) > 0:
             #explore
+            pass
         
         # for ant_loc in ants.my_ants():
         #     # try all directions in given order
