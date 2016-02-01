@@ -5,6 +5,7 @@ from ant import *
 from intel import *
 from pick import *
 from sys import *
+from astar import *
 
 # define a class with a do_turn method
 # the Ants.run method will parse and update bot input
@@ -40,6 +41,8 @@ class MyBot:
         # loop through all my ants and try to give them orders
         # the ant_loc is an ant location tuple in (row, col) form
 
+        search_map = make_map(ants.map)
+        
         ants.visible((0,0))
 
         for row in range(self.map_rows):
@@ -68,8 +71,9 @@ class MyBot:
         for food in self.food_locs.keys():
             if len(free_ants) > 0:
                 ant = pick(food, free_ants)
-                path = compute_path(ant, food)
-                ants.issue_order(ant, execute(ant, food, path, ants))
+                path = astar_search(ant, food, search_map)
+                if path:
+                    ants.issue_order(ant, execute(ant, food, path, ants))
                 free_ants.remove(ant)
             else:
                 break;
