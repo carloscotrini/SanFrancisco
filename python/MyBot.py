@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 from ants import *
+from ant import *
+from intel import *
 
 # define a class with a do_turn method
 # the Ants.run method will parse and update bot input
@@ -9,13 +11,15 @@ class MyBot:
         # define class level variables, will be remembered between turns
         self.food_locs = {}
         self.hill_locs = {}
-    
+        self.hill_location = None
+        self.terrain = []
+        
     # do_setup is run once at the start of the game
     # after the bot has received the game settings
     # the ants class is created and setup by the Ants.run method
     def do_setup(self, ants):
         # initialize data structures after learning the game settings
-        pass
+        self.terrain = terrain_info(ants)
     
     # do turn is run once per turn
     # the ants class has the game state and is updated by the Ants.run method
@@ -25,12 +29,17 @@ class MyBot:
         # the ant_loc is an ant location tuple in (row, col) form
 
         free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) ==0]
+        food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
+        for ant in food_ants:
+            path = compute_path(ant, self.hill_location)
+            ants.issue_order(ant, execute(ant, hill_location, path, ants))
+        
         for food in food_locs:
             if len(free_ants) > 0:
                 ant = pick_ant(food, free_ants)
                 path = compute_path(ant, food)
-                execute(ant, food, path, ants)
+                ants.issue_order(ant, execute(ant, food, path, ants))
                 free_ants.remove(ant)
             else:
                 break;
