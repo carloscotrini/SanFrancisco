@@ -23,22 +23,37 @@ class MyBot:
     def do_turn(self, ants):
         # loop through all my ants and try to give them orders
         # the ant_loc is an ant location tuple in (row, col) form
-        for ant_loc in ants.my_ants():
-            # try all directions in given order
-            directions = ('n','e','s','w')
-            for direction in directions:
-                # the destination method will wrap around the map properly
-                # and give us a new (row, col) tuple
-                new_loc = ants.destination(ant_loc, direction)
-                # passable returns true if the location is land
-                if (ants.passable(new_loc)):
-                    # an order is the location of a current ant and a direction
-                    ants.issue_order((ant_loc, direction))
-                    # stop now, don't give 1 ant multiple orders
-                    break
-            # check if we still have time left to calculate more orders
-            if ants.time_remaining() < 10:
-                break
+
+        free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) ==0]
+
+        for food in food_locs:
+            if len(free_ants) > 0:
+                ant = pick_ant(food, free_ants)
+                path = compute_path(ant, food)
+                execute(ant, food, path, ants)
+                free_ants.remove(ant)
+            else:
+                break;
+
+        if len(free_ants) > 0:
+            #explore
+        
+        # for ant_loc in ants.my_ants():
+        #     # try all directions in given order
+        #     directions = ('n','e','s','w')
+        #     for direction in directions:
+        #         # the destination method will wrap around the map properly
+        #         # and give us a new (row, col) tuple
+        #         new_loc = ants.destination(ant_loc, direction)
+        #         # passable returns true if the location is land
+        #         if (ants.passable(new_loc)):
+        #             # an order is the location of a current ant and a direction
+        #             ants.issue_order((ant_loc, direction))
+        #             # stop now, don't give 1 ant multiple orders
+        #             break
+        #     # check if we still have time left to calculate more orders
+        #     if ants.time_remaining() < 10:
+        #         break
             
 if __name__ == '__main__':
     # psyco will speed up python a little, but is not needed
