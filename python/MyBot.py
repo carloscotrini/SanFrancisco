@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from ants import *
 from ant import *
 from intel import *
@@ -16,14 +17,21 @@ class MyBot:
         self.hill_location = None
         self.terrain = []
         self.visibility = None
+        self.map_rows = None
+        self.map_cols = None
         
     # do_setup is run once at the start of the game
     # after the bot has received the game settings
     # the ants class is created and setup by the Ants.run method
     def do_setup(self, ants):
         # initialize data structures after learning the game settings
-        self.terrain = terrain_info(ants)
-        visibility = [[sys.maxint for row in range(ants.rows)] for col in range(ants.cols)]
+
+        #self.terrain = terrain_info(ants)
+        self.map_cols = ants.cols #len(ants.map[0])
+        self.map_rows = ants.rows #len(ants.map)
+        
+        
+        self.visibility = [[sys.maxint for col in range(self.map_cols)] for row in range(self.map_rows)]
         
     
     # do turn is run once per turn
@@ -32,14 +40,15 @@ class MyBot:
     def do_turn(self, ants):
         # loop through all my ants and try to give them orders
         # the ant_loc is an ant location tuple in (row, col) form
+
         ants.visible((0,0))
 
-        for row in range(ants.rows):
-            for col in range(ants.cols):
-                if vision[row][col]:
-                    visibility[row][col] = 0
+        for row in range(self.map_rows):
+            for col in range(self.map_cols):
+                if ants.vision[row][col]:
+                    self.visibility[row][col] = 0
                 else:
-                    visibility[row][col] += 1
+                    self.visibility[row][col] += 1
         
         free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) == 0]
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
@@ -48,7 +57,7 @@ class MyBot:
             path = compute_path(ant, self.hill_location)
             ants.issue_order(ant, execute(ant, hill_location, path, ants))
         
-        for food in food_locs:
+        for food in self.food_locs:
             if len(free_ants) > 0:
                 ant = pick(food, free_ants)
                 path = compute_path(ant, food)
@@ -60,6 +69,7 @@ class MyBot:
         if len(free_ants) > 0:
             #explore
             pass
+
         
         # for ant_loc in ants.my_ants():
         #     # try all directions in given order
