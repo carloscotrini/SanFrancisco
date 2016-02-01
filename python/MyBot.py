@@ -30,7 +30,6 @@ class MyBot:
         self.map_cols = ants.cols #len(ants.map[0])
         self.map_rows = ants.rows #len(ants.map)
         
-        
         self.visibility = [[sys.maxint for col in range(self.map_cols)] for row in range(self.map_rows)]
         
     
@@ -49,7 +48,16 @@ class MyBot:
                     self.visibility[row][col] = 0
                 else:
                     self.visibility[row][col] += 1
+
+        for loc in self.food_locs:
+            row, col = loc
+            if ants.vision[row][col]:
+                pass
         
+        for food in ants.food_list:
+            self.food_locs[food] = True
+
+                    
         free_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) == 0]
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
@@ -57,7 +65,7 @@ class MyBot:
             path = compute_path(ant, self.hill_location)
             ants.issue_order(ant, execute(ant, hill_location, path, ants))
         
-        for food in self.food_locs:
+        for food in self.food_locs.keys():
             if len(free_ants) > 0:
                 ant = pick(food, free_ants)
                 path = compute_path(ant, food)
