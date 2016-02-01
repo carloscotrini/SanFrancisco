@@ -70,10 +70,14 @@ class MyBot:
         for ant in food_ants:
             dest_hill = []
             min_dist = -1
+            min_path = None
             for hill in ants.my_hills():
                 path = astar_search(ant, hill, search_map)
+                if not path:
+                    continue
                 if len(path) < min_dist or min_dist == -1:
                     min_dist = len(path)
+                    min_path = path
                     dest_hill = hill
             if min_dist >= 0:
                 if len(path) > 1 and not path[1] in destinations:

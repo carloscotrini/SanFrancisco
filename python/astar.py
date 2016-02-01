@@ -93,6 +93,7 @@ def astar_search(start_loc, dest_loc, astar_map):
     start = nodes[start_loc[0]][start_loc[1]]
     end = nodes[dest_loc[0]][dest_loc[1]]
     path = paths.search(start, end)
-    path = [tuple([p.x, p.y]) for p in path]
+    if path:
+        path = [tuple([p.x, p.y]) for p in path]
     return path
 
