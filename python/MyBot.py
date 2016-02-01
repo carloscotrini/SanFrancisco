@@ -65,7 +65,7 @@ class MyBot:
         food_ants = [ant for ant in ants.my_ants() if ants.get_food_amount(ant) > 0]
 
         for ant in food_ants:
-            path = compute_path(ant, self.hill_location)
+            path = astar_search(ant, self.hill_location, search_map)
             ants.issue_order(ant, execute(ant, hill_location, path, ants))
         
         for food in self.food_locs.keys():
@@ -73,7 +73,7 @@ class MyBot:
                 ant = pick(food, free_ants)
                 path = astar_search(ant, food, search_map)
                 if path:
-                    ants.issue_order(ant, execute(ant, food, path, ants))
+                    ants.issue_order((ant, execute(ant, food, path, ants)))
                 free_ants.remove(ant)
             else:
                 break;
