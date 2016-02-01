@@ -6,6 +6,7 @@ from intel import *
 from pick import *
 from sys import *
 from astar import *
+from basic_explore import *
 
 # define a class with a do_turn method
 # the Ants.run method will parse and update bot input
@@ -79,8 +80,7 @@ class MyBot:
                 break;
 
         if len(free_ants) > 0:
-            #explore
-            pass
+            basic_explore.issue_exploration_orders(ants, free_ants, self.visibility)
 
         
         # for ant_loc in ants.my_ants():
